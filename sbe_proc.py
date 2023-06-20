@@ -1,9 +1,12 @@
-# SBE CTD Data Processor
-# Author: Thomas Armstrong
+"""
+SBE CTD Data Processor
+Author: Thomas Armstrong
+Australian Institute of Marine Science
 
-# Adapted from seabirdSBE_python written by Taylor Denouden
-# https://github.com/tayden/seabirdSBE_python
-# Copyright (c) 2016 Hakai Institute and Contributors All Rights Reserved.
+Adapted from seabirdSBE_python written by Taylor Denouden
+https://github.com/tayden/seabirdSBE_python
+Copyright (c) 2016 Hakai Institute and Contributors All Rights Reserved.
+"""
 
 #Imports
 import SBE
@@ -18,9 +21,7 @@ import customtkinter
 
 # Setup paths
 raw_path = r"C:\Users\tarmstro\Python\sbe_data_proc\raw"
-# raw_path = folder_selected
 processed_path = r"C:\Users\tarmstro\Python\sbe_data_proc\processed"
-# file_name = "GB14070"
 
 # CTD IDs
 CTD_list = ['0597', '0890', '1009', '1233', '4409', '4525', '6180', '6390', '7053', '7360', '7816']
