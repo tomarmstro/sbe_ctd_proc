@@ -41,6 +41,7 @@ def process_hex(file_name, sbe):
 # All other processing steps
 def process_step(file_name, process_step, target_file_ext, result_file_ext, output_msg, error_msg):
     # run processing
+
     with open(os.path.join(processed_path, file_name + target_file_ext + '.cnv'), "r", encoding='utf-8') as read_file:
         print("File being processed: ", read_file)
         cnvfile = process_step(read_file.read())
@@ -76,7 +77,6 @@ def process():
                     if 'Temperature SN =' in line:
                         ctd_id = line[-5:].strip()
                         print("CTD ID: ", ctd_id)
-                    # print("finding date")
                     #Livewire ctds have different temperature IDs
                     if ctd_id == '5165':
                         print("This is a livewire CTD")
@@ -138,11 +138,19 @@ def process():
                     print("This is the config file: ", file)
                     xmlcon_file = file
 
+            cwd = os.path.dirname(__file__)
+
+
+            for line in open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa')):
+                if '<Latitude value=' in line:
+                    line = '        <Latitude value="-19.000000" />'
+                    print("Psa file: ", line)
+
 
             # print("Raw files: ", file)
 
             # Create instance of SBE functions with config files
-            cwd = os.path.dirname(__file__)
+
             sbe = SBE.SBE(
                 bin=os.path.join(cwd, 'SBEDataProcessing-Win32'),  # default
                 temp_path=os.path.join(cwd, 'raw'),  # default
