@@ -14,10 +14,8 @@ import os
 from datetime import datetime
 from tkinter import filedialog
 from tkinter import *
-# import tkinter as tk
 import customtkinter
-# import tkinter
-# import PySimpleGUI as sg
+
 
 # Setup paths
 raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
@@ -41,11 +39,9 @@ def process_hex(file_name, sbe):
 # All other processing steps
 def process_step(file_name, processing_step, target_file_ext, result_file_ext, output_msg, error_msg):
     # run processing
-
     with open(os.path.join(processed_path, file_name + target_file_ext + '.cnv'), "r", encoding='utf-8') as read_file:
         print("File being processed: ", read_file)
         cnvfile = processing_step(read_file.read())
-
         try:
             with open(os.path.join(processed_path, file_name + result_file_ext + '.cnv'), "w") as write_file:
                 write_file.write(cnvfile)
@@ -68,35 +64,21 @@ def process():
         ctd_id = ""
         if file.endswith(".hex"):
             # find ctd id for the cast
-            print("This is file: ", file)
-            print("base: ", os.path.splitext(file)[0])
+            print("Processing file: ", file)
             base_file_name = os.path.splitext(file)[0]
             with open(os.path.join(raw_path, base_file_name + '.hex'), "r", encoding='utf-8') as file_name:
                 print("file name: ", file_name)
                 for line in file_name:
-                    # if 'SerialNumber=' in line:
-                    #     ctd_id = line[-7:-3].strip()
                     if 'Temperature SN =' in line:
                         ctd_id = line[-5:].strip()
-                        print("CTD ID: ", ctd_id)
-                    #Livewire ctds have different temperature IDs
+                    #Livewire ctds have different temperature IDs - Adjust them here
                     if ctd_id == '5165':
-                        print("This is a livewire CTD")
                         ctd_id = '1233'
-                        print("CTD ID set to 1233")
                     if ctd_id == '4851':
-                        print("This is a livewire CTD")
                         ctd_id = '0890'
-                        print("CTD ID set to 0890")
-                    # print("checking line")
                     if 'cast' in line:
-                        # cast_date = line[11:22]
-
                         cast_date = datetime.strptime(line[11:22], "%d %b %Y")
-                        print("Cast date: ", cast_date)
-                        # print(datetime.strptime(cast_date, "%d %b %Y"))
                     if 'NMEA UTC (Time) =' in line:
-                        print("Livewire cast time: ", line[20:31])
                         cast_date = datetime.strptime(line[20:31], "%b %d %Y")
                 if ctd_id == "":
                     print("No serial number found!")
@@ -104,149 +86,51 @@ def process():
                 print("CTD ID: ", ctd_id)
             else:
                 break
-                # config_dir = ctd_id
-            print("Current CTD ID: ", ctd_id)
             # get config subdirs for the relevant ctd by date
             subfolders = [f.path for f in os.scandir(os.path.join(r"C:\Users\tarmstro\Python\sbe_ctd_proc\config", ctd_id))
                           if f.is_dir()]
-            print("Subfolders: ", subfolders)
-            # print(subfolders)
             found_config = 0
             for folder in subfolders:
                 folder_date = datetime.strptime(folder[-8:], "%Y%m%d")
-
                 # find date range our cast fits into
                 if folder_date < cast_date:
-                    print("Folder date: ", folder_date)
-                    print("Cast date: ", cast_date)
-                    print("The folder is older than the cast date")
-                    temp_date = folder_date
                     temp_folder = folder
                 else:
-                    print("The folder is newer than the cast date")
-                    config_date = temp_date
                     config_folder = temp_folder
-                    found_config = 1
                     break
                 if found_config == 0:
-                    print("Using the latest config folder")
-                    config_date = folder_date
                     config_folder = folder
-
 
             print("This is the config folder: ", config_folder)
             for file in os.listdir(config_folder):
                 if file.endswith(".xmlcon"):
                     print("This is the config file: ", file)
                     xmlcon_file = file
-
             cwd = os.path.dirname(__file__)
 
             #Remove name appends and enter latitude
+            #psa files for AIMS modules
             psa_files = ['Filter.psa', 'AlignCTD.psa', 'LoopEditIMOS.psa', 'DeriveIMOS.psa', 'BinAvgIMOS.psa']
             for psa_file in psa_files:
+                #open psa file and store all lines
                 with open(os.path.join(cwd, config_folder, psa_file), 'r') as f:
                     get_all = f.readlines()
+                #open new psa file and rewrite, changing lines if NameAppend or Latitude are found
                 with open(os.path.join(cwd, config_folder, psa_file), 'w') as f:
-                    for i, line in enumerate(get_all,
-                                             0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
-                        print("PSA LINE: ", line)
+                    for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
                         if '  <NameAppend value=\"' in line:
                             f.writelines('  <NameAppend value="" />\n')
-                        # if psa_file == 'DeriveIMOS.psa':
                         if '    <Latitude value=' in line:  ## OVERWRITES line:2
                             f.writelines('    <Latitude value=\"' + derive_latitude + '\" />\n')
                             print("Psa latitude changed!")
-                            print("Line: ", line)
                         else:
                             f.writelines(line)
-                            print("psa latitude NOT changed")
-
-            #DERIVE STUFF
-            # with open(os.path.join(cwd, config_folder, 'Filter.psa'), 'r') as f:
-            #     get_all = f.readlines()
-            # #
-            # with open(os.path.join(cwd, config_folder, 'Filter.psa'), 'w') as f:
-            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
-            #         print("PSA LINE: ", line)
-            #         if '  <NameAppend value=\"' in line:
-            #             f.writelines('  <NameAppend value="" />\n')
-            #         else:
-            #             f.writelines(line)
-            #             print("psa latitude NOT changed")
-            #
-            # with open(os.path.join(cwd, config_folder, 'AlignCTD.psa'), 'r') as f:
-            #     get_all = f.readlines()
-            # #
-            # with open(os.path.join(cwd, config_folder, 'AlignCTD.psa'), 'w') as f:
-            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
-            #         print("PSA LINE: ", line)
-            #         if '  <NameAppend value=\"' in line:
-            #             f.writelines('  <NameAppend value="" />\n')
-            #         else:
-            #             f.writelines(line)
-            #             print("psa latitude NOT changed")
-            # with open(os.path.join(cwd, config_folder, 'LoopEditIMOS.psa'), 'r') as f:
-            #     get_all = f.readlines()
-            # #
-            # with open(os.path.join(cwd, config_folder, 'LoopEditIMOS.psa'), 'w') as f:
-            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
-            #         print("PSA LINE: ", line)
-            #         if '  <NameAppend value=\"' in line:
-            #             f.writelines('  <NameAppend value="" />\n')
-            #         else:
-            #             f.writelines(line)
-            #             print("psa latitude NOT changed")
-            #
-            #
-            #
-            # with open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa'), 'r') as f:
-            #     get_all = f.readlines()
-            # #
-            # with open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa'), 'w') as f:
-            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
-            #         print("PSA LINE: ", line)
-            #         if '  <NameAppend value=\"' in line:
-            #             f.writelines('  <NameAppend value="" />\n')
-            #         if '    <Latitude value=' in line:  ## OVERWRITES line:2
-            #             f.writelines('    <Latitude value=\"-59.000000\" />\n')
-            #             print("Psa latitude changed!")
-            #             print("Line: ", line)
-            #         else:
-            #             f.writelines(line)
-            #             print("psa latitude NOT changed")
-            #
-            # with open(os.path.join(cwd, config_folder, 'BinAvgIMOS.psa'), 'r') as f:
-            #     get_all = f.readlines()
-            # #
-            # with open(os.path.join(cwd, config_folder, 'BinAvgIMOS.psa'), 'w') as f:
-            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
-            #         print("PSA LINE: ", line)
-            #         if '  <NameAppend value=\"' in line:
-            #             f.writelines('  <NameAppend value="" />\n')
-            #         else:
-            #             f.writelines(line)
-            #             print("psa latitude NOT changed")
-
-
-
-            # for line in open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa')):
-            #     if '<Latitude value=' in line:
-            #         line = '        <Latitude value="-19.000000" />'
-            #         print("Psa file: ", line)
-
-
-            # print("Raw files: ", file)
 
             # Create instance of SBE functions with config files
-
             sbe = SBE.SBE(
                 bin=os.path.join(cwd, 'SBEDataProcessing-Win32'),  # default
                 temp_path=os.path.join(cwd, 'raw'),  # default
-                # xmlcon=os.path.join(cwd, 'xmlcon', 'SBE19plusV2_6180_20170929.xmlcon'),
                 xmlcon=os.path.join(cwd, config_folder, xmlcon_file),
-
-                # config_date
 
                 # AIMS processing modules
                 psa_dat_cnv=os.path.join(cwd, config_folder, 'DatCnv.psa'),
@@ -255,8 +139,8 @@ def process():
                 psa_loop_edit=os.path.join(cwd, config_folder, 'LoopEditIMOS.psa'),
                 psa_derive=os.path.join(cwd, config_folder, 'DeriveIMOS.psa'),
                 psa_bin_avg=os.path.join(cwd, config_folder, 'BinAvgIMOS.psa'),
-                # unused for AIMS processing
 
+                # unused for AIMS processing
                 # psa_cell_thermal_mass=os.path.join(cwd, 'psa', 'CellTM.psa'),
                 # psa_dat_cnv=os.path.join(cwd, 'psa', 'DatCnv.psa'),
                 # psa_derive_teos10=os.path.join(cwd, 'psa', 'DeriveTEOS_10.psa'),
@@ -264,34 +148,30 @@ def process():
                 # psa_section=os.path.join(cwd, 'psa', 'Section.psa'),
                 # psa_wild_edit=os.path.join(cwd, 'psa', 'WildEdit.psa')
             )
+            #run DatCnv
             process_hex(base_file_name, sbe)
+            #Run other AIMS modules
             process_cnv(base_file_name, sbe)
 
-
-
+#Get the raw directory with button click (default assigned to local directory)
 def select_raw_directory():
     print("Raw Directory Button clicked!")
-
     raw_directory_selected = filedialog.askdirectory()
     global raw_path
     raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
     raw_path = raw_directory_selected
     raw_path_label.config(text=raw_path)
-    # raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
 
-
+#Get the processed directory with button click (default assigned to local directory)
 def select_processed_directory():
     print("Processed Directory Button clicked!")
-
     processed_directory_selected = filedialog.askdirectory()
     global processed_path
     processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
     processed_path = processed_directory_selected
     processed_path_label.config(text=processed_path)
-    # processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
 
 # Create a tkinter window
-# window = tk.Tk()
 window = customtkinter.CTk()  # create CTk window like you do with the Tk window
 window.geometry("350x250")
 window.grid_columnconfigure(0, weight=1)
@@ -313,26 +193,5 @@ processed_path_label.pack()
 # process button
 process_button = customtkinter.CTkButton(window, text="Process", font=("Arial", 25), command=process).pack(pady=20)
 
-
 # Start the tkinter event loop
 window.mainloop()
-
-
-
-
-# sg.theme('DarkAmber')   # Add a touch of color
-# # All the stuff inside your window.
-# layout = [  [sg.Text('Some text on Row 1')],
-#             [sg.Text('Enter something on Row 2'), sg.InputText()],
-#             [sg.Button('Ok'), sg.Button('Cancel')] ]
-#
-# # Create the Window
-# window = sg.Window('Window Title', layout)
-# # Event Loop to process "events" and get the "values" of the inputs
-# while True:
-#     event, values = window.read()
-#     if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
-#         break
-#     print('You entered ', values[0])
-#
-# window.close()
