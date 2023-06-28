@@ -20,7 +20,7 @@ import os
 import subprocess
 import glob
 
-raw_path = r'C:\Users\tarmstro\PycharmProjects\testing\raw'
+raw_path = ''
 
 class SBE(object):
     """SBE processing class.
@@ -190,7 +190,7 @@ class SBE(object):
         f = open(out_file, 'r')
         result = f.read()
         f.close()
-        
+
         # Cleanup
         os.remove(in_file)
         os.remove(out_file)

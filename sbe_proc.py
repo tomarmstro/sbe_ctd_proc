@@ -16,8 +16,6 @@ from tkinter import filedialog
 from tkinter import *
 import customtkinter
 
-
-# Setup paths
 raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
 processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
 
@@ -60,6 +58,7 @@ def process_cnv(file_name, sbe):
 # Main process loop
 def process():
     for file in os.listdir(raw_path):
+        #Get input for derive latitude
         derive_latitude = customtkinter.CTkInputDialog(text="What is the latitude for: " + file + "?", title="Derive Latitude Input").get_input()
         ctd_id = ""
         if file.endswith(".hex"):
@@ -101,10 +100,10 @@ def process():
                 if found_config == 0:
                     config_folder = folder
 
-            print("This is the config folder: ", config_folder)
+            print("Configuration Folder: ", config_folder)
             for file in os.listdir(config_folder):
                 if file.endswith(".xmlcon"):
-                    print("This is the config file: ", file)
+                    print("Configuration File: ", file)
                     xmlcon_file = file
             cwd = os.path.dirname(__file__)
 
@@ -118,9 +117,10 @@ def process():
                 #open new psa file and rewrite, changing lines if NameAppend or Latitude are found
                 with open(os.path.join(cwd, config_folder, psa_file), 'w') as f:
                     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+                    # for line in get_all:
                         if '  <NameAppend value=\"' in line:
                             f.writelines('  <NameAppend value="" />\n')
-                        if '    <Latitude value=' in line:  ## OVERWRITES line:2
+                        elif '    <Latitude value=' in line:  ## OVERWRITES line:2
                             f.writelines('    <Latitude value=\"' + derive_latitude + '\" />\n')
                             print("Psa latitude changed!")
                         else:
