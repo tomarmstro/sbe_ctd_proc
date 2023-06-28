@@ -20,8 +20,8 @@ import customtkinter
 # import PySimpleGUI as sg
 
 # Setup paths
-raw_path = r"C:\Users\tarmstro\Python\sbe_data_proc\raw"
-processed_path = r"C:\Users\tarmstro\Python\sbe_data_proc\processed"
+raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
+processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
 
 # CTD IDs
 CTD_list = ['0597', '0890', '1009', '1233', '4409', '4525', '6180', '6390', '7053', '7360', '7816']
@@ -39,16 +39,17 @@ def process_hex(file_name, sbe):
             print("Error while converting the CNV file!")
 
 # All other processing steps
-def process_step(file_name, process_step, target_file_ext, result_file_ext, output_msg, error_msg):
+def process_step(file_name, processing_step, target_file_ext, result_file_ext, output_msg, error_msg):
     # run processing
 
     with open(os.path.join(processed_path, file_name + target_file_ext + '.cnv'), "r", encoding='utf-8') as read_file:
         print("File being processed: ", read_file)
-        cnvfile = process_step(read_file.read())
+        cnvfile = processing_step(read_file.read())
+
         try:
             with open(os.path.join(processed_path, file_name + result_file_ext + '.cnv'), "w") as write_file:
                 write_file.write(cnvfile)
-            print(output_msg)
+                print(output_msg)
         except IOError:
             print(error_msg)
 
@@ -63,6 +64,7 @@ def process_cnv(file_name, sbe):
 # Main process loop
 def process():
     for file in os.listdir(raw_path):
+        derive_latitude = customtkinter.CTkInputDialog(text="What is the latitude for: " + file + "?", title="Derive Latitude Input").get_input()
         ctd_id = ""
         if file.endswith(".hex"):
             # find ctd id for the cast
@@ -105,7 +107,7 @@ def process():
                 # config_dir = ctd_id
             print("Current CTD ID: ", ctd_id)
             # get config subdirs for the relevant ctd by date
-            subfolders = [f.path for f in os.scandir(os.path.join(r"C:\Users\tarmstro\Python\sbe_data_proc\config", ctd_id))
+            subfolders = [f.path for f in os.scandir(os.path.join(r"C:\Users\tarmstro\Python\sbe_ctd_proc\config", ctd_id))
                           if f.is_dir()]
             print("Subfolders: ", subfolders)
             # print(subfolders)
@@ -140,11 +142,98 @@ def process():
 
             cwd = os.path.dirname(__file__)
 
+            #Remove name appends and enter latitude
+            psa_files = ['Filter.psa', 'AlignCTD.psa', 'LoopEditIMOS.psa', 'DeriveIMOS.psa', 'BinAvgIMOS.psa']
+            for psa_file in psa_files:
+                with open(os.path.join(cwd, config_folder, psa_file), 'r') as f:
+                    get_all = f.readlines()
+                with open(os.path.join(cwd, config_folder, psa_file), 'w') as f:
+                    for i, line in enumerate(get_all,
+                                             0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+                        print("PSA LINE: ", line)
+                        if '  <NameAppend value=\"' in line:
+                            f.writelines('  <NameAppend value="" />\n')
+                        # if psa_file == 'DeriveIMOS.psa':
+                        if '    <Latitude value=' in line:  ## OVERWRITES line:2
+                            f.writelines('    <Latitude value=\"' + derive_latitude + '\" />\n')
+                            print("Psa latitude changed!")
+                            print("Line: ", line)
+                        else:
+                            f.writelines(line)
+                            print("psa latitude NOT changed")
 
-            for line in open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa')):
-                if '<Latitude value=' in line:
-                    line = '        <Latitude value="-19.000000" />'
-                    print("Psa file: ", line)
+            #DERIVE STUFF
+            # with open(os.path.join(cwd, config_folder, 'Filter.psa'), 'r') as f:
+            #     get_all = f.readlines()
+            # #
+            # with open(os.path.join(cwd, config_folder, 'Filter.psa'), 'w') as f:
+            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+            #         print("PSA LINE: ", line)
+            #         if '  <NameAppend value=\"' in line:
+            #             f.writelines('  <NameAppend value="" />\n')
+            #         else:
+            #             f.writelines(line)
+            #             print("psa latitude NOT changed")
+            #
+            # with open(os.path.join(cwd, config_folder, 'AlignCTD.psa'), 'r') as f:
+            #     get_all = f.readlines()
+            # #
+            # with open(os.path.join(cwd, config_folder, 'AlignCTD.psa'), 'w') as f:
+            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+            #         print("PSA LINE: ", line)
+            #         if '  <NameAppend value=\"' in line:
+            #             f.writelines('  <NameAppend value="" />\n')
+            #         else:
+            #             f.writelines(line)
+            #             print("psa latitude NOT changed")
+            # with open(os.path.join(cwd, config_folder, 'LoopEditIMOS.psa'), 'r') as f:
+            #     get_all = f.readlines()
+            # #
+            # with open(os.path.join(cwd, config_folder, 'LoopEditIMOS.psa'), 'w') as f:
+            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+            #         print("PSA LINE: ", line)
+            #         if '  <NameAppend value=\"' in line:
+            #             f.writelines('  <NameAppend value="" />\n')
+            #         else:
+            #             f.writelines(line)
+            #             print("psa latitude NOT changed")
+            #
+            #
+            #
+            # with open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa'), 'r') as f:
+            #     get_all = f.readlines()
+            # #
+            # with open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa'), 'w') as f:
+            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+            #         print("PSA LINE: ", line)
+            #         if '  <NameAppend value=\"' in line:
+            #             f.writelines('  <NameAppend value="" />\n')
+            #         if '    <Latitude value=' in line:  ## OVERWRITES line:2
+            #             f.writelines('    <Latitude value=\"-59.000000\" />\n')
+            #             print("Psa latitude changed!")
+            #             print("Line: ", line)
+            #         else:
+            #             f.writelines(line)
+            #             print("psa latitude NOT changed")
+            #
+            # with open(os.path.join(cwd, config_folder, 'BinAvgIMOS.psa'), 'r') as f:
+            #     get_all = f.readlines()
+            # #
+            # with open(os.path.join(cwd, config_folder, 'BinAvgIMOS.psa'), 'w') as f:
+            #     for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+            #         print("PSA LINE: ", line)
+            #         if '  <NameAppend value=\"' in line:
+            #             f.writelines('  <NameAppend value="" />\n')
+            #         else:
+            #             f.writelines(line)
+            #             print("psa latitude NOT changed")
+
+
+
+            # for line in open(os.path.join(cwd, config_folder, 'DeriveIMOS.psa')):
+            #     if '<Latitude value=' in line:
+            #         line = '        <Latitude value="-19.000000" />'
+            #         print("Psa file: ", line)
 
 
             # print("Raw files: ", file)
@@ -182,17 +271,24 @@ def process():
 
 def select_raw_directory():
     print("Raw Directory Button clicked!")
+
     raw_directory_selected = filedialog.askdirectory()
     global raw_path
+    raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
     raw_path = raw_directory_selected
     raw_path_label.config(text=raw_path)
+    # raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
+
 
 def select_processed_directory():
     print("Processed Directory Button clicked!")
+
     processed_directory_selected = filedialog.askdirectory()
     global processed_path
+    processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
     processed_path = processed_directory_selected
     processed_path_label.config(text=processed_path)
+    # processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
 
 # Create a tkinter window
 # window = tk.Tk()
@@ -201,7 +297,6 @@ window.geometry("350x250")
 window.grid_columnconfigure(0, weight=1)
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
-
 # Set the window title
 window.title("Seabird CTD Processor")
 

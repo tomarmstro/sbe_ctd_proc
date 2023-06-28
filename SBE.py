@@ -18,6 +18,7 @@ from __future__ import print_function
 from hashlib import sha1
 import os
 import subprocess
+import glob
 
 raw_path = r'C:\Users\tarmstro\PycharmProjects\testing\raw'
 
@@ -109,8 +110,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -134,8 +136,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -159,8 +162,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -180,7 +184,7 @@ class SBE(object):
 
         # Return file content
         # print(os.path.splitext(in_file)[0])
-        out_file = os.path.splitext(in_file)[0] + '.cnv'
+        out_file = glob.glob(os.path.splitext(in_file)[0] + '*.cnv')[0]
         print("In file: ", in_file)
         print("Out file: ", out_file)
         f = open(out_file, 'r')
@@ -190,7 +194,7 @@ class SBE(object):
         # Cleanup
         os.remove(in_file)
         os.remove(out_file)
-        # print(result)
+
         # Return content
         return result
 
@@ -206,15 +210,18 @@ class SBE(object):
         # Execute the seabird command
         cmd = '{}\DeriveW.exe'.format(self._sbe_path)
         self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
-
+        print(in_file)
         # Return file content
         out_file = in_file
+        print("This is the DERIVE outfile: ", out_file)
         f = open(out_file, 'r')
         result = f.read()
+
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -238,8 +245,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -257,14 +265,18 @@ class SBE(object):
         cmd = '{}\FilterW.exe'.format(self._sbe_path)
         self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
 
+        print("CMD: ", cmd)
+        print("THIS THING: ", self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa))
+
         # Return file content
         out_file = in_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -288,8 +300,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -313,8 +326,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -338,8 +352,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result
@@ -363,8 +378,9 @@ class SBE(object):
         result = f.read()
         f.close()
 
-        # Cleanup
-        os.remove(out_file)
+        # Cleanup - Remove temp files including if the psa files contain name appends
+        for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            os.remove(filename)
 
         # Return content
         return result

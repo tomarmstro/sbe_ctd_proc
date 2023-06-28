@@ -2,11 +2,11 @@
 <Derive >
   <Version value="7.26.6.28" />
   <ServerName value="Derive" />
-  <InstrumentPath value="C:\Users\tarmstro\Python\sbe_ctd_proc\config\7360\19plusV2_7360_20170901\19plusV2_7360_20170901.xmlcon" />
+  <InstrumentPath value="C:\AIMS\Seabird\Config\19plusV2_7360_20170901.xmlcon" />
   <InstrumentMatch value="0" />
-  <InputDir value="C:\Users\tarmstro\Python\sbe_ctd_proc\config\7360\19plusV2_7360_20170901" />
+  <InputDir value="C:\AIMS\Seabird\Data\Batch" />
   <InputFileArray size="0" GrowBy="-1" />
-  <OutputDir value="C:\Users\tarmstro\Python\sbe_ctd_proc\config\7360\19plusV2_7360_20170901" />
+  <OutputDir value="C:\AIMS\Seabird\Data\Batch" />
   <NameAppend value="D" />
   <OutputFile value="" />
   <LastProcessed value="0" />

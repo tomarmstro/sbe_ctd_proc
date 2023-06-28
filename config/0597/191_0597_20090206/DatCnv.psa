@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Data_Conversion >
-  <Version value="7.26.6.28" />
+  <Version value="7.21k" />
   <ServerName value="Data Conversion" />
-  <InstrumentPath value="C:\Users\tarmstro\PycharmProjects\testing\config\1233\911plus_1233_dualTC_20190723\911plus_1233_20190723.xmlcon" />
+  <InstrumentPath value="C:\AIMS\Seabird\Config\191_0597_20090206no_tr.xmlcon" />
   <InstrumentMatch value="0" />
-  <InputDir value="C:\Users\tarmstro\PycharmProjects\testing\config\1233\911plus_1233_dualTC_20190723" />
+  <InputDir value="C:\AIMS\Seabird\Data\Batch" />
   <InputFileArray size="0" GrowBy="-1" />
-  <OutputDir value="C:\Users\tarmstro\PycharmProjects\testing\config\1233\911plus_1233_dualTC_20190723" />
-  <NameAppend value="" />
+  <OutputDir value="C:\AIMS\Seabird\Data\Batch" />
+  <NameAppend value="C" />
   <OutputFile value="" />
   <LastProcessed value="0" />
   <ProcessScansToEnd value="1" />
@@ -22,7 +22,7 @@
   <ScanRangeDuration value="2.000000" />
   <StartTimeOption value="0" />
   <PromptForNoteAndOrStartTime value="0" />
-  <CalcArray Size="15" >
+  <CalcArray Size="9" >
     <CalcArrayItem index="0" CalcID="84" >
       <Calc UnitID="52" Ordinal="0" >
         <FullName value="Time, Elapsed [seconds]" />
@@ -33,9 +33,9 @@
         <FullName value="Scan Count" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="2" CalcID="65" >
+    <CalcArrayItem index="2" CalcID="67" >
       <Calc UnitID="3" Ordinal="0" >
-        <FullName value="Pressure, Digiquartz [db]" />
+        <FullName value="Pressure, Strain Gauge [db]" />
       </Calc>
     </CalcArrayItem>
     <CalcArrayItem index="3" CalcID="81" >
@@ -43,66 +43,35 @@
         <FullName value="Temperature [ITS-90, deg C]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="4" CalcID="81" >
-      <Calc UnitID="6" Ordinal="1" >
-        <FullName value="Temperature, 2 [ITS-90, deg C]" />
-      </Calc>
-    </CalcArrayItem>
-    <CalcArrayItem index="5" CalcID="12" >
+    <CalcArrayItem index="4" CalcID="12" >
       <Calc UnitID="58" Ordinal="0" >
         <FullName value="Conductivity [S/m]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="6" CalcID="12" >
-      <Calc UnitID="58" Ordinal="1" >
-        <FullName value="Conductivity, 2 [S/m]" />
+    <CalcArrayItem index="5" CalcID="45" >
+      <Calc UnitID="45" Ordinal="0" >
+        <FullName value="OBS, Backscatterance (D &amp; A) [NTU]" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="7" CalcID="93" >
-      <Calc UnitID="38" Ordinal="0" >
-        <FullName value="Fluorescence, WET Labs ECO-AFL/FL [mg/m^3]" />
-      </Calc>
-    </CalcArrayItem>
-    <CalcArrayItem index="8" CalcID="179" >
-      <Calc UnitID="46" Ordinal="0" >
-        <FullName value="Beam Transmission, WET Labs C-Star [%]" />
-      </Calc>
-    </CalcArrayItem>
-    <CalcArrayItem index="9" CalcID="36" >
+    <CalcArrayItem index="6" CalcID="36" >
       <Calc UnitID="23" Ordinal="1" >
         <FullName value="Frequency 1" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="10" CalcID="18" >
+    <CalcArrayItem index="7" CalcID="18" >
       <Calc UnitID="32" Ordinal="0" >
         <FullName value="Descent Rate [m/s]" />
         <WindowSize value="2.000000" />
       </Calc>
     </CalcArrayItem>
-    <CalcArrayItem index="11" CalcID="15" >
+    <CalcArrayItem index="8" CalcID="15" >
       <Calc UnitID="11" Ordinal="0" >
-        <FullName value="Density [density, kg/m^3]" />
-      </Calc>
-    </CalcArrayItem>
-    <CalcArrayItem index="12" CalcID="15" >
-      <Calc UnitID="11" Ordinal="1" >
-        <FullName value="Density, 2 [density, kg/m^3]" />
-      </Calc>
-    </CalcArrayItem>
-    <CalcArrayItem index="13" CalcID="59" >
-      <Calc UnitID="-1" Ordinal="0" >
-        <FullName value="PAR/Irradiance, Biospherical/Licor" />
-      </Calc>
-    </CalcArrayItem>
-    <CalcArrayItem index="14" CalcID="77" >
-      <Calc UnitID="-1" Ordinal="0" >
-        <FullName value="SPAR/Surface Irradiance" />
+        <FullName value="Density [density, Kg/m^3]" />
       </Calc>
     </CalcArrayItem>
   </CalcArray>
   <MiscellaneousDataForCalculations >
     <Latitude value="0.000000" />
-    <Longitude value="0.000000" />
     <DescentRateAndAcceleration >
       <WindowSize value="2.000000" />
     </DescentRateAndAcceleration>
