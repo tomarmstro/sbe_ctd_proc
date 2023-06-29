@@ -14,10 +14,20 @@ import os
 from datetime import datetime
 from tkinter import filedialog
 from tkinter import *
-import customtkinter
+
+# package = customtkinter
+import pip
+try:
+  import customtkinter
+except:
+  pip.main(['install', 'customtkinter'])
+  # !pip install customtkinter
+  import customtkinter
+# import customtkinter
 
 raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
 processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
+config_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\config"
 
 # CTD IDs
 CTD_list = ['0597', '0890', '1009', '1233', '4409', '4525', '6180', '6390', '7053', '7360', '7816']
@@ -86,8 +96,9 @@ def process():
             else:
                 break
             # get config subdirs for the relevant ctd by date
-            subfolders = [f.path for f in os.scandir(os.path.join(r"C:\Users\tarmstro\Python\sbe_ctd_proc\config", ctd_id))
-                          if f.is_dir()]
+            # subfolders = [f.path for f in os.scandir(os.path.join(r"C:\Users\tarmstro\Python\sbe_ctd_proc\config", ctd_id)) if f.is_dir()]
+            subfolders = [f.path for f in os.scandir(os.path.join(config_path, ctd_id)) if f.is_dir()]
+
             found_config = 0
             for folder in subfolders:
                 folder_date = datetime.strptime(folder[-8:], "%Y%m%d")
@@ -114,19 +125,24 @@ def process():
                 #open psa file and store all lines
                 with open(os.path.join(cwd, config_folder, psa_file), 'r') as f:
                     get_all = f.readlines()
-                #open new psa file and rewrite, changing lines if NameAppend or Latitude are found
-                with open(os.path.join(cwd, config_folder, psa_file), 'w') as f:
-                    for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
-                    # for line in get_all:
-                        if '  <NameAppend value=\"' in line:
-                            f.writelines('  <NameAppend value="" />\n')
-                        elif '    <Latitude value=' in line:  ## OVERWRITES line:2
-                            f.writelines('    <Latitude value=\"' + derive_latitude + '\" />\n')
-                            print("Psa latitude changed!")
-                        else:
+                try:
+                    #open new psa file and rewrite, changing lines if NameAppend or Latitude are found
+                    with open(os.path.join(cwd, config_folder, psa_file), 'w') as f:
+                        for i, line in enumerate(get_all, 0):  ## STARTS THE NUMBERING FROM 1 (by default it begins with 0)
+                        # for line in get_all:
+                            if '  <NameAppend value=\"' in line:
+                                f.writelines('  <NameAppend value="" />\n')
+                            elif '    <Latitude value=' in line:  ## OVERWRITES line:2
+                                f.writelines('    <Latitude value=\"' + derive_latitude + '\" />\n')
+                                print("Psa latitude changed!")
+                            else:
+                                f.writelines(line)
+                except TypeError:
+                    with open(os.path.join(cwd, config_folder, psa_file), 'w') as f:
+                        for i, line in enumerate(get_all, 0):
                             f.writelines(line)
 
-            # Create instance of SBE functions with config files
+            # Create instance of SBE functions with config_path files
             sbe = SBE.SBE(
                 bin=os.path.join(cwd, 'SBEDataProcessing-Win32'),  # default
                 temp_path=os.path.join(cwd, 'raw'),  # default
@@ -158,7 +174,7 @@ def select_raw_directory():
     print("Raw Directory Button clicked!")
     raw_directory_selected = filedialog.askdirectory()
     global raw_path
-    raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
+    # raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
     raw_path = raw_directory_selected
     raw_path_label.config(text=raw_path)
 
@@ -167,13 +183,23 @@ def select_processed_directory():
     print("Processed Directory Button clicked!")
     processed_directory_selected = filedialog.askdirectory()
     global processed_path
-    processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
+    # processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
     processed_path = processed_directory_selected
     processed_path_label.config(text=processed_path)
 
+# Get the processed directory with button click (default assigned to local directory)
+def select_config_directory():
+    print("Configuration Directory Button clicked!")
+    config_directory_selected = filedialog.askdirectory()
+    global config_path
+    # config_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\config"
+    config_path = config_directory_selected
+    config_path_label.config(text=config_path)
+
+
 # Create a tkinter window
 window = customtkinter.CTk()  # create CTk window like you do with the Tk window
-window.geometry("350x250")
+window.geometry("350x350")
 window.grid_columnconfigure(0, weight=1)
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
@@ -182,13 +208,22 @@ window.title("Seabird CTD Processor")
 
 # raw directory button
 raw_directory_button = customtkinter.CTkButton(window, text="Select Raw Directory", command=select_raw_directory).pack(pady=20)
+
 raw_path_label = Label(window)
+raw_path_label.config(text=raw_path)
 raw_path_label.pack()
 
 # processed directory button
 processed_directory_button = customtkinter.CTkButton(window, text="Select Processed Directory", command=select_processed_directory).pack(pady=20)
 processed_path_label = Label(window)
+processed_path_label.config(text=processed_path)
 processed_path_label.pack()
+
+# processed directory button
+config_directory_button = customtkinter.CTkButton(window, text="Select Configuration Directory", command=select_config_directory).pack(pady=20)
+config_path_label = Label(window)
+config_path_label.config(text=config_path)
+config_path_label.pack()
 
 # process button
 process_button = customtkinter.CTkButton(window, text="Process", font=("Arial", 25), command=process).pack(pady=20)
