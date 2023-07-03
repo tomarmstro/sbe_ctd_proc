@@ -25,9 +25,12 @@ except:
   import customtkinter
 # import customtkinter
 
+#config
 raw_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\raw"
 processed_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\processed"
 config_path = r"C:\Users\tarmstro\Python\sbe_ctd_proc\config"
+#Set whether the program designates latitude for the Derive module (1 for yes, 0 for no)
+set_derive_latitude = 1
 
 # CTD IDs
 CTD_list = ['0597', '0890', '1009', '1233', '4409', '4525', '6180', '6390', '7053', '7360', '7816']
@@ -69,7 +72,10 @@ def process_cnv(file_name, sbe):
 def process():
     for file in os.listdir(raw_path):
         #Get input for derive latitude
-        derive_latitude = customtkinter.CTkInputDialog(text="What is the latitude for: " + file + "?", title="Derive Latitude Input").get_input()
+        if set_derive_latitude == 1:
+            derive_latitude = customtkinter.CTkInputDialog(text="What is the latitude for: " + file + "?", title="Derive Latitude Input").get_input()
+        else:
+            derive_latitude = ""
         ctd_id = ""
         if file.endswith(".hex"):
             # find ctd id for the cast

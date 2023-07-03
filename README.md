@@ -1,10 +1,12 @@
 # sbe_ctd_proc
  Seabird CTD Processor
 
-Batch processing for automated running of Seabird Data Processing for CTDs
-Automated calibration file and ctd selection to process all files in a directory easily.
+Batch processing for Seabird CTD Data Processing.
+Automated calibration file and CTD selection to process all files in a directory easily.
 
-Config directory setup:
+This script will process all .hex files in a directory and ask for latitude for each file's derive step.
+
+Ensure all relevant calibration .xmlcon and .psa files are in the following config directory structure:
 - config ->
    - ctd_id1
    - ctd_id2 ->
