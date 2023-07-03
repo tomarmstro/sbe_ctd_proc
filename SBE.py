@@ -264,9 +264,6 @@ class SBE(object):
         cmd = '{}\FilterW.exe'.format(self._sbe_path)
         self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
 
-        print("CMD: ", cmd)
-        print("THIS THING: ", self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa))
-
         # Return file content
         out_file = in_file
         f = open(out_file, 'r')
