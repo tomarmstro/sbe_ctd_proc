@@ -2,10 +2,6 @@
 SBE CTD Data Processor
 Author: Thomas Armstrong
 Australian Institute of Marine Science
-
-Adapted from seabirdSBE_python written by Taylor Denouden
-https://github.com/tayden/seabirdSBE_python
-Copyright (c) 2016 Hakai Institute and Contributors All Rights Reserved.
 """
 
 #Imports
