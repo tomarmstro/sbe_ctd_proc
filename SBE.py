@@ -210,10 +210,8 @@ class SBE(object):
         # Execute the seabird command
         cmd = '{}\DeriveW.exe'.format(self._sbe_path)
         self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
-        print(in_file)
         # Return file content
         out_file = in_file
-        print("This is the DERIVE outfile: ", out_file)
         f = open(out_file, 'r')
         result = f.read()
         f.close()

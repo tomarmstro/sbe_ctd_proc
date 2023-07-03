@@ -51,7 +51,7 @@ def process_hex(file_name, sbe):
 def process_step(file_name, processing_step, target_file_ext, result_file_ext, output_msg, error_msg):
     # run processing
     with open(os.path.join(processed_path, file_name + target_file_ext + '.cnv'), "r", encoding='utf-8') as read_file:
-        print("File being processed: ", read_file)
+        print("File being processed: ", file_name)
         cnvfile = processing_step(read_file.read())
         try:
             with open(os.path.join(processed_path, file_name + result_file_ext + '.cnv'), "w") as write_file:
@@ -138,7 +138,7 @@ def process():
                         # for line in get_all:
                             if '  <NameAppend value=\"' in line:
                                 f.writelines('  <NameAppend value="" />\n')
-                            elif '    <Latitude value=' in line:  ## OVERWRITES line:2
+                            elif '    <Latitude value=' in line:
                                 f.writelines('    <Latitude value=\"' + derive_latitude + '\" />\n')
                                 print("Psa latitude changed!")
                             else:
