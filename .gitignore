@@ -1,2 +1,6 @@
 processed/*
 raw/*.cnv
+*.hex
+*.cnv
+*.psa
+*.xmlcon

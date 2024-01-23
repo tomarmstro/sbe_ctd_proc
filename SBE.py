@@ -63,7 +63,7 @@ class SBE(object):
         # Create temp file path use hash of file content
         # import ipdb; ipdb.set_trace()
         path = os.path.join(self._temp_dir, sha1(content.encode('utf-8')).hexdigest() + ext)
-
+        print("temp file path: ", path)
         # Create the temp file
         with open(path, 'w') as f:
             f.write(content)
@@ -79,7 +79,7 @@ class SBE(object):
         # see pp 136
         # seabird.com/sites/default/files/documents/SBEDataProcessing_7.26.0.pdf
         # import ipdb; ipdb.set_trace()
-        #/a"" in exec_str is to ignore all name appends as they are manually imput with sbe_proc
+        #/a"" in exec_str is to ignore all name appends as they are manually input with sbe_proc
         exec_str = '"{cmd}" /c"{c}" /i"{i}" /o"{o}" /p"{p}" /a"" /s'.format(
             cmd=cmd,
             c=xmlcon,
@@ -177,16 +177,18 @@ class SBE(object):
 
         # Create temporary files and paths from data
         in_file = self._write_temp_file(data, '.hex')
-        # in_file = (data + '.hex')
+        # out_file = self._write_temp_file(data, '.cnv')
+        print("In file: ", in_file)
+
         # Execute the seabird command
         cmd = '{}\DatCnvW.exe'.format(self._sbe_path)
         self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
 
+        print(os.path.splitext(in_file)[0] + '*.cnv')
+        print(glob.glob(os.path.splitext(in_file)[0] + '*.cnv'))
         # Return file content
-        # print(os.path.splitext(in_file)[0])
-        out_file = glob.glob(os.path.splitext(in_file)[0] + '*.cnv')[0]
-        print("In file: ", in_file)
-        print("Out file: ", out_file)
+        out_file = os.path.splitext(in_file)[0] + 'C.cnv'
+        # out_file = glob.glob(os.path.splitext(in_file)[0] + '*.cnv')[0]
         f = open(out_file, 'r')
         result = f.read()
         f.close()

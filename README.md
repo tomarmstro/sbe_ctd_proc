@@ -7,6 +7,7 @@ Automated calibration file and CTD selection to process all files in a directory
 This script will process all .hex files in a directory and ask for latitude for each file's derive step.
 
 Ensure all relevant calibration .xmlcon and .psa files are in the following config directory structure:
+Dates must be at the end of the calibration_files_##### directory names.
 - config ->
    - ctd_id1
    - ctd_id2 ->
