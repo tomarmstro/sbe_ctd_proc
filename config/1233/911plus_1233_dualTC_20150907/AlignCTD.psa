@@ -65,11 +65,13 @@
     <CalcArrayItem index="10" CalcID="59" >
       <Calc UnitID="-1" Ordinal="0" >
         <FullName value="PAR/Irradiance, Biospherical/Licor" />
+		<PAR_Units value="0" />
       </Calc>
     </CalcArrayItem>
     <CalcArrayItem index="11" CalcID="77" >
       <Calc UnitID="-1" Ordinal="0" >
         <FullName value="SPAR/Surface Irradiance" />
+		<SPAR_Units value="0" />
       </Calc>
     </CalcArrayItem>
   </CalcArray>

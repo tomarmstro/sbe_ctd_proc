@@ -87,9 +87,9 @@ class SBE(object):
             o=out_dir,
             p=psa
         )
-
+        # import ipdb; ipdb.set_trace()
         # Run command, throw error if failure occurs
-        subprocess.check_call(exec_str)
+        subprocess.check_call(exec_str, shell=True)
 
     def align_ctd(self, data, xmlcon=None, psa=None):
         """Execute the SBE Align CTD module."""
