@@ -63,14 +63,14 @@ class SBE(object):
         # Create temp file path use hash of file content
         # import ipdb; ipdb.set_trace()
         path = os.path.join(self._temp_dir, sha1(content.encode('utf-8')).hexdigest() + ext)
-        print("temp file path: ", path)
+        # print("temp file path: ", path)
         # Create the temp file
         with open(path, 'w') as f:
             f.write(content)
         # Return path name of temp file
         return path
 
-    def _sbe_cmd(self, cmd, in_file, out_dir, xmlcon, psa):
+    def _sbe_cmd(self, cmd, input_file, out_dir, xmlcon, psa):
         """Execute an SBE module via command args."""
         # Check that cmd is valid
         if not os.path.exists(cmd):
@@ -83,7 +83,7 @@ class SBE(object):
         exec_str = '"{cmd}" /c"{c}" /i"{i}" /o"{o}" /p"{p}" /a"" /s'.format(
             cmd=cmd,
             c=xmlcon,
-            i=in_file,
+            i=input_file,
             o=out_dir,
             p=psa
         )
@@ -98,14 +98,14 @@ class SBE(object):
         psa = psa or self._psa_align_ctd
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\AlignCTDW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -124,14 +124,14 @@ class SBE(object):
         psa = psa or self._psa_bin_avg
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\BinAvgW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -150,14 +150,14 @@ class SBE(object):
         psa = psa or self._psa_cell_thermal_mass
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\CellTMW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -176,25 +176,24 @@ class SBE(object):
         psa = psa or self._psa_dat_cnv
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.hex')
-        # out_file = self._write_temp_file(data, '.cnv')
-        print("In file: ", in_file)
+        input_file = self._write_temp_file(data, '.hex')
 
         # Execute the seabird command
         cmd = '{}\DatCnvW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
-        print(os.path.splitext(in_file)[0] + '*.cnv')
-        print(glob.glob(os.path.splitext(in_file)[0] + '*.cnv'))
+        # print("test1", os.path.splitext(input_file)[0] + '*.cnv')
+        # print("test2", glob.glob(os.path.splitext(input_file)[0] + '*.cnv'))
+
         # Return file content
-        out_file = os.path.splitext(in_file)[0] + 'C.cnv'
-        # out_file = glob.glob(os.path.splitext(in_file)[0] + '*.cnv')[0]
+        out_file = os.path.splitext(input_file)[0] + 'C.cnv'
+        # out_file = glob.glob(os.path.splitext(input_file)[0] + '*.cnv')[0]
         f = open(out_file, 'r')
         result = f.read()
         f.close()
 
         # Cleanup
-        os.remove(in_file)
+        os.remove(input_file)
         os.remove(out_file)
 
         # Return content
@@ -207,13 +206,13 @@ class SBE(object):
         psa = psa or self._psa_derive
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\DeriveW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -232,14 +231,14 @@ class SBE(object):
         psa = psa or self._psa_derive_teos10
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\DeriveTEOS_10W.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -258,14 +257,14 @@ class SBE(object):
         psa = psa or self._psa_filter
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\FilterW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -284,14 +283,14 @@ class SBE(object):
         psa = psa or self._psa_loop_edit
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\LoopEditW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -310,14 +309,14 @@ class SBE(object):
         psa = psa or self._psa_sea_plot
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\SeaPlotW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -336,14 +335,14 @@ class SBE(object):
         psa = psa or self._psa_section
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\SectionW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()
@@ -362,14 +361,14 @@ class SBE(object):
         psa = psa or self._psa_wild_edit
 
         # Create temporary files and paths from data
-        in_file = self._write_temp_file(data, '.cnv')
+        input_file = self._write_temp_file(data, '.cnv')
 
         # Execute the seabird command
         cmd = '{}\WildEditW.exe'.format(self._sbe_path)
-        self._sbe_cmd(cmd, in_file, os.path.dirname(in_file), xmlcon, psa)
+        self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
 
         # Return file content
-        out_file = in_file
+        out_file = input_file
         f = open(out_file, 'r')
         result = f.read()
         f.close()

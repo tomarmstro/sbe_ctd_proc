@@ -6,7 +6,6 @@ Australian Institute of Marine Science
 
 # TODO: Skip option for each cast
 
-
 # Imports
 import SBE
 import os
@@ -149,9 +148,9 @@ def process_cnv(file_name, sbe: SBE) -> None:
 
 
 def get_db_tables(db_file, mdw_file, db_user, db_password):
-    import ipdb; ipdb.set_trace()
+    # import ipdb; ipdb.set_trace()
     db_driver = r"{Microsoft Access Driver (*.mdb, *.accdb)}"
-    if mdw_file is None or mdw_file == "":
+    if mdw_file is None:
         cnxn_str = (
             f"DRIVER={db_driver};"
             f"DBQ={db_file};"
@@ -171,6 +170,7 @@ def get_db_tables(db_file, mdw_file, db_user, db_password):
             f"READONLY=TRUE;"
             f"ExtendedAnsiSQL=1;"
         )
+    # import ipdb; ipdb.set_trace()
     connection_url = sa.engine.URL.create("access+pyodbc", username=db_user, password=db_password, query={"odbc_connect": cnxn_str})
 
     engine = sa.engine.create_engine(connection_url)
@@ -189,17 +189,26 @@ def get_db_tables(db_file, mdw_file, db_user, db_password):
 
 def process() -> None:
     """Main process loop"""
+    print("\n******************* Processing new file *******************")
     #import ipdb; ipdb.set_trace()
     # query the db for all site etc tables
 
     # TODO: if opening the db backend just need to supply the mdb file and not mdw and skip security check
-    db_file = CONFIG["OCEANDB_BACKEND"]
-    mdw_file = ""  # r"C:\OceanDB\OceanDBSecurity.mdw"
+    # db_file = CONFIG["OCEANDB_BACKEND"]
+    db_file = CONFIG["CTD_DATABASE_PATH"] + r"\OceanDB2016_be.mdb"
+    # mdw_file = r"C:\OceanDB\OceanDBSecurity.mdw"
+    mdw_file = CONFIG["CTD_DATABASE_PATH"] + r"\OceanDBSecurity.mdw"
     db_user = "readonly"
     db_password = "readonly"
-    if CONFIG["USE_DATABASE"] == True:
-        print("Reading OceanDB")
+    # if CONFIG["USE_DATABASE"] == True:
+    
+    try:
         db_FieldTrips, db_Sites, db_DeploymentData, db_Instruments, db_CTDData = get_db_tables(db_file, mdw_file, db_user, db_password)
+        database_found = True
+        print("Reading OceanDB")
+    except sa.exc.DBAPIError:
+        print("No database files found") 
+        database_found = False
 
     for file in os.listdir(CONFIG["RAW_PATH"]):
         nmea_checker = False
@@ -208,23 +217,22 @@ def process() -> None:
             continue
         # Get input for derive latitude
         # TODO: read latitude from oceandb
-        if CONFIG["SET_DERIVE_LATITUDE"]:
-            derive_latitude = customtkinter.CTkInputDialog(
-                text="What is the latitude for: " + file + "?",
-                title="Derive Latitude Input",
-            ).get_input()
+        # if CONFIG["SET_DERIVE_LATITUDE"]:
+        #     derive_latitude = customtkinter.CTkInputDialog(
+        #         text="What is the latitude for: " + file + "?",
+        #         title="Derive Latitude Input",
+        #     ).get_input()
         # else:
         #     # derive_latitude = ""
         #     continue
-
 
         ctd_id = ""
         if file.endswith(".hex"):
             # find ctd id for the cast
             # print("Processing file: ", file)
             base_file_name = os.path.splitext(file)[0]
-            #import ipdb; ipdb.set_trace()
-            if CONFIG["USE_DATABASE"] == True:
+            
+            if database_found == True:
                 ctd_deployment = db_CTDData[
                     db_CTDData['FileName'].str.contains(f'^{base_file_name + ".hex"}', case=False, regex=True,
                                                         na=False)]
@@ -243,23 +251,30 @@ def process() -> None:
                         print(
                             f"Using latitude = {derive_latitude} from site = {ctd_deployment['Site'].values[0]}, station = {ctd_deployment['Station'].values[0]}")
                     else:
-                        # filename not in the db
-                        print(f"WARNING: empty latitude for file : {base_file_name}")
+                        # filename not in the db, request latitude input
+                        print(f"WARNING: empty latitude for file : {base_file_name}. Manual latitude input required.")
                         derive_latitude = customtkinter.CTkInputDialog(
                             text="What is the latitude for: " + file + "?",
                             title="Derive Latitude Input",
                         ).get_input()
+            #If no database found, request latitude input
+            else:
+                print("WARNING: No database found. Manual latitude input required.")
+                derive_latitude = customtkinter.CTkInputDialog(
+                    text="What is the latitude for: " + file + "?",
+                    title="Derive Latitude Input",
+                ).get_input()
 
             with open(
                 os.path.join(CONFIG["RAW_PATH"], base_file_name + ".hex"),
                 "r",
                 encoding="utf-8",
             ) as file_name:
-                print("file name: ", file_name.name)
+                print("File Name: ", file_name.name)
                 for line in file_name:
                     if "Temperature SN =" in line:
                         ctd_id = line[-5:].strip()
-                        print(f"Temperature SN = {ctd_id}")
+                        print(f"Temperature Serial Number = {ctd_id}")
                     # Livewire ctds have different temperature IDs - Adjust them here
                     # use CONFIG stored mapping
                     if ctd_id in CONFIG["LIVEWIRE_MAPPING"]:
@@ -280,18 +295,23 @@ def process() -> None:
                 if ctd_id == "":
                     print("No serial number found!")
             if ctd_id in CONFIG["CTD_LIST"]:
-                print("CTD ID: ", ctd_id)
+                print("CTD Serial Number: ", ctd_id)
             else:
                 break
             print("Cast date: ", cast_date)
             # get config subdirs for the relevant ctd by date
-            subfolders = [
-                f.path
-                for f in os.scandir(os.path.join(CONFIG["CTD_CONFIG_PATH"], ctd_id))
-                if f.is_dir()
-            ]
+            try:
+                subfolders = [
+                    f.path
+                    for f in os.scandir(os.path.join(CONFIG["CTD_CONFIG_PATH"], ctd_id))
+                    if f.is_dir()
+                ]
+            # Exception handling for incompatible config file
+            except FileNotFoundError:
+                print("WARNING: Config file path incompatible.")
+                break
             found_config = 0
-            print(f"Checking configuration directory for {cast_date} subdirectory.")
+            print(f"Checking configuration directory for subdirectory relevant to {cast_date} cast date.")
             subfolder_date_list = []
             # for folder in subfolders:
             #
@@ -303,7 +323,7 @@ def process() -> None:
             for folder in subfolders:
                 folder_date = datetime.strptime(folder[-8:], "%Y%m%d")
                 # find date range our cast fits into
-                print(f"Checking {folder_date} directory.")
+                print(f"Checking {folder_date} configuration directory.")
                 if folder_date < cast_date:
                     temp_folder = folder
                 else:
@@ -311,13 +331,13 @@ def process() -> None:
                     break
                 if found_config == 0:
                     config_folder = folder
-            print("config_folder: ", config_folder)
+            print("Configuration Folder Selected: ", config_folder)
             # print("Configuration Folder: ", config_folder)
             for config_file in os.listdir(config_folder):
                 if config_file.endswith(".xmlcon"):
                     print("Configuration File: ", config_file)
                     xmlcon_file = config_file
-            print("config_file: ", config_file)
+            # print("config_file: ", config_file)
             cwd = os.path.dirname(__file__)
 
             # Remove name appends and enter latitude
@@ -344,7 +364,7 @@ def process() -> None:
                                 f.writelines(
                                     '    <Latitude value="' + derive_latitude + '" />\n'
                                 )
-                                print(f"Psa latitude changed in file {psa_file}")
+                                print(f"Latitude changed in PSA file {psa_file}")
                             else:
                                 f.writelines(line)
                 except TypeError:
@@ -378,7 +398,7 @@ def process() -> None:
             process_cnv(base_file_name, sbe)
 
 
-def select_raw_directory():
+def select_raw_directory(raw_path_label):
     """Get the raw directory with button click (default assigned to local directory)"""
     print("Raw Directory Button clicked!")
     raw_directory_selected = filedialog.askdirectory()
@@ -386,7 +406,7 @@ def select_raw_directory():
     raw_path_label.config(text=CONFIG["RAW_PATH"])
 
 
-def select_processed_directory():
+def select_processed_directory(processed_path_label):
     """Get the processed directory with button click (default assigned to local directory)"""
     print("Processed Directory Button clicked!")
     processed_directory_selected = filedialog.askdirectory()
@@ -394,19 +414,35 @@ def select_processed_directory():
     processed_path_label.config(text=CONFIG["PROCESSED_PATH"])
 
 
-def select_config_directory():
-    """Get the processed directory with button click (default assigned to local directory)"""
+def select_config_directory(config_path_label):
+    """Get the config directory with button click (default assigned to local directory)"""
     print("Configuration Directory Button clicked!")
     config_directory_selected = filedialog.askdirectory()
     CONFIG["CTD_CONFIG_PATH"] = config_directory_selected
     config_path_label.config(text=CONFIG["CTD_CONFIG_PATH"])
 
 
+def select_database_directory(database_path_label):
+    """Get the database directory with button click (default assigned to local directory)"""
+    print("Database Directory Button clicked!")
+    database_directory_selected = filedialog.askdirectory()
+    database_path = database_directory_selected
+    CONFIG["CTD_DATABASE_PATH"] = database_directory_selected
+    database_path_label.config(text=CONFIG["CTD_DATABASE_PATH"])
+
+# def stop():
+#     """Get the database directory with button click (default assigned to local directory)"""
+#     global stop
+#     print("stopping")
+#     stop = True
+
+
 # %%
 def main():
+    processed_path = CONFIG["PROCESSED_PATH"]
     # Create a tkinter window
     window = customtkinter.CTk()  # create CTk window like you do with the Tk window
-    window.geometry("350x350")
+    window.geometry("350x450")
     window.grid_columnconfigure(0, weight=1)
     customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
     customtkinter.set_default_color_theme(
@@ -417,33 +453,46 @@ def main():
 
     # raw directory button
     raw_directory_button = customtkinter.CTkButton(
-        window, text="Select Raw Directory", command=select_raw_directory
+        window, text="Select Raw Directory", command=lambda: select_raw_directory(raw_path_label)
     ).pack(pady=20)
-
     raw_path_label = Label(window)
     raw_path_label.config(text=CONFIG["RAW_PATH"])
     raw_path_label.pack()
 
     # processed directory button
     processed_directory_button = customtkinter.CTkButton(
-        window, text="Select Processed Directory", command=select_processed_directory
+        window, text="Select Processed Directory", command=lambda: select_processed_directory(processed_path_label)
     ).pack(pady=20)
-    processed_path_label = Label(window)
-    processed_path_label.config(text=CONFIG["PROCESSED_PATH"])
+    processed_path_label = Label(window, text=processed_path)
+    # processed_path_label.config(text=processed_path)
     processed_path_label.pack()
 
     # configuration directory button
     config_directory_button = customtkinter.CTkButton(
-        window, text="Select Configuration Directory", command=select_config_directory
+        window, text="Select Configuration Directory", command=lambda: select_config_directory(config_path_label)
     ).pack(pady=20)
     config_path_label = Label(window)
     config_path_label.config(text=CONFIG["CTD_CONFIG_PATH"])
     config_path_label.pack()
 
+    # database directory button
+    database_directory_button = customtkinter.CTkButton(
+        window, text="Select Database Directory", command=lambda: select_database_directory(database_path_label)
+    ).pack(pady=20)
+    database_path_label = Label(window)
+    database_path_label.config(text=CONFIG["CTD_DATABASE_PATH"])
+
+    database_path_label.pack()
+
     # process button
     process_button = customtkinter.CTkButton(
         window, text="Process", font=("Arial", 25), command=process
     ).pack(pady=20)
+
+    # # stop button
+    # stop_button = customtkinter.CTkButton(
+    #     window, text="Stop", font=("Arial", 25), command=stop
+    # ).pack(pady=20)
 
     # Start the tkinter event loop
     window.mainloop()
