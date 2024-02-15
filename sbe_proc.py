@@ -5,6 +5,7 @@ Australian Institute of Marine Science
 """
 
 # TODO: Skip option for each cast
+# TODO: Pull temp file cleanup over to main function for lost files left from using 'stop button'
 
 # Imports
 import SBE
@@ -13,6 +14,8 @@ from datetime import datetime
 from tkinter import filedialog, Label
 import sqlalchemy as sa
 import pandas as pd
+
+import multiprocessing
 
 # package = customtkinter
 import pip
@@ -78,6 +81,7 @@ def process_step(
     :type error_msg: str
     """
     # run processing
+    print("file name: ", file_name)
     with open(
         os.path.join(CONFIG["PROCESSED_PATH"], file_name + target_file_ext + ".cnv"),
         "r",
@@ -192,7 +196,6 @@ def process() -> None:
     print("\n******************* Processing new file *******************")
     #import ipdb; ipdb.set_trace()
     # query the db for all site etc tables
-
     # TODO: if opening the db backend just need to supply the mdb file and not mdw and skip security check
     # db_file = CONFIG["OCEANDB_BACKEND"]
     db_file = CONFIG["CTD_DATABASE_PATH"] + r"\OceanDB2016_be.mdb"
@@ -320,6 +323,7 @@ def process() -> None:
             # subfolder_date_list.sort()
             #
             # print(subfolder_date_list)
+        
             for folder in subfolders:
                 folder_date = datetime.strptime(folder[-8:], "%Y%m%d")
                 # find date range our cast fits into
@@ -395,6 +399,7 @@ def process() -> None:
             # run DatCnv
             process_hex(base_file_name, sbe)
             # Run other AIMS modules
+
             process_cnv(base_file_name, sbe)
 
 
@@ -430,19 +435,30 @@ def select_database_directory(database_path_label):
     CONFIG["CTD_DATABASE_PATH"] = database_directory_selected
     database_path_label.config(text=CONFIG["CTD_DATABASE_PATH"])
 
-# def stop():
-#     """Get the database directory with button click (default assigned to local directory)"""
-#     global stop
-#     print("stopping")
-#     stop = True
 
+
+# Terminate the process
+def start():
+    global proc
+    proc = multiprocessing.Process(target=process, args=())
+    proc.start()
+
+"""Stop processing with a button click"""
+def stop():
+    try:
+        proc.terminate()  # sends a SIGTERM   
+        print("Stopped processing.")  
+    except NameError:
+        print("No processing started.")
+        
 
 # %%
 def main():
+    # global proc
     processed_path = CONFIG["PROCESSED_PATH"]
     # Create a tkinter window
     window = customtkinter.CTk()  # create CTk window like you do with the Tk window
-    window.geometry("350x450")
+    window.geometry("400x500")
     window.grid_columnconfigure(0, weight=1)
     customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
     customtkinter.set_default_color_theme(
@@ -453,46 +469,41 @@ def main():
 
     # raw directory button
     raw_directory_button = customtkinter.CTkButton(
-        window, text="Select Raw Directory", command=lambda: select_raw_directory(raw_path_label)
-    ).pack(pady=20)
-    raw_path_label = Label(window)
-    raw_path_label.config(text=CONFIG["RAW_PATH"])
-    raw_path_label.pack()
+        window, text="Select Raw Directory", font=CONFIG["LABEL_FONTS"], command=lambda: select_raw_directory(raw_path_label)
+    ).pack(pady=(25,0))
+    raw_path_label = customtkinter.CTkLabel(window, text=CONFIG["RAW_PATH"], font=CONFIG["LABEL_FONTS"])
+    raw_path_label.pack(pady=(5, 25))
 
     # processed directory button
     processed_directory_button = customtkinter.CTkButton(
-        window, text="Select Processed Directory", command=lambda: select_processed_directory(processed_path_label)
-    ).pack(pady=20)
-    processed_path_label = Label(window, text=processed_path)
-    # processed_path_label.config(text=processed_path)
-    processed_path_label.pack()
+        window, text="Select Processed Directory", font=CONFIG["LABEL_FONTS"], command=lambda: select_processed_directory(processed_path_label)
+    ).pack()
+    processed_path_label = customtkinter.CTkLabel(window, text=processed_path, font=CONFIG["LABEL_FONTS"])
+    processed_path_label.pack(pady=(5, 25))
 
     # configuration directory button
     config_directory_button = customtkinter.CTkButton(
-        window, text="Select Configuration Directory", command=lambda: select_config_directory(config_path_label)
-    ).pack(pady=20)
-    config_path_label = Label(window)
-    config_path_label.config(text=CONFIG["CTD_CONFIG_PATH"])
-    config_path_label.pack()
+        window, text="Select Configuration Directory", font=CONFIG["LABEL_FONTS"], command=lambda: select_config_directory(config_path_label)
+    ).pack()
+    config_path_label = customtkinter.CTkLabel(window, text=CONFIG["CTD_CONFIG_PATH"], font=CONFIG["LABEL_FONTS"])
+    config_path_label.pack(pady=(5, 25))
 
     # database directory button
     database_directory_button = customtkinter.CTkButton(
-        window, text="Select Database Directory", command=lambda: select_database_directory(database_path_label)
-    ).pack(pady=20)
-    database_path_label = Label(window)
-    database_path_label.config(text=CONFIG["CTD_DATABASE_PATH"])
-
-    database_path_label.pack()
+        window, text="Select Database Directory", font=CONFIG["LABEL_FONTS"], command=lambda: select_database_directory(database_path_label)
+    ).pack()
+    database_path_label = customtkinter.CTkLabel(window, text=CONFIG["CTD_DATABASE_PATH"], font=CONFIG["LABEL_FONTS"])
+    database_path_label.pack(pady=(5, 25))
 
     # process button
     process_button = customtkinter.CTkButton(
-        window, text="Process", font=("Arial", 25), command=process
-    ).pack(pady=20)
+        window, text="Process", font=("Arial", 30, 'bold'), fg_color="#5D892B", hover_color="#334B18", command=start
+    ).pack(pady=(10,10))
 
-    # # stop button
-    # stop_button = customtkinter.CTkButton(
-    #     window, text="Stop", font=("Arial", 25), command=stop
-    # ).pack(pady=20)
+    # stop button
+    stop_button = customtkinter.CTkButton(
+        window, text="Stop", font=("Arial", 20, 'bold'), fg_color="#AC3535", hover_color="#621E1E", command=stop
+    ).pack(pady=(0,20))
 
     # Start the tkinter event loop
     window.mainloop()

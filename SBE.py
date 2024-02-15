@@ -63,7 +63,7 @@ class SBE(object):
         # Create temp file path use hash of file content
         # import ipdb; ipdb.set_trace()
         path = os.path.join(self._temp_dir, sha1(content.encode('utf-8')).hexdigest() + ext)
-        # print("temp file path: ", path)
+        print("temp file path: ", path)
         # Create the temp file
         with open(path, 'w') as f:
             f.write(content)
@@ -112,6 +112,8 @@ class SBE(object):
 
         # Cleanup - Remove temp files including if the psa files contain name appends
         for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+            print(filename)
+            print(out_file)
             os.remove(filename)
 
         # Return content
@@ -167,7 +169,7 @@ class SBE(object):
             os.remove(filename)
 
         # Return content
-        return result
+        return result 
 
     def dat_cnv(self, data, xmlcon=None, psa=None):
         """Execute the SBE Data Conversion module."""

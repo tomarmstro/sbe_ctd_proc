@@ -5,10 +5,7 @@ CONFIG = {}
 CONFIG["RAW_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\raw"
 CONFIG["PROCESSED_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\processed"
 CONFIG["CTD_CONFIG_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\config"
-
 CONFIG["CTD_DATABASE_PATH"] = r"C:\OceanDB\Backend"
-
-CONFIG["OCEANDB_BACKEND"] = r"C:\OceanDB\Backend\OceanDB2016_be.mdb"
 
 # Set whether the program designates latitude for the Derive module (1 for yes, 0 for no)
 CONFIG["SET_DERIVE_LATITUDE"] = True
@@ -36,3 +33,6 @@ CONFIG["CTD_LIST"] = [
 # if ctd_id == '4851':
 #     ctd_id = '0890'
 CONFIG["LIVEWIRE_MAPPING"] = {"5165": "1233", "4851": "0890"}
+
+
+CONFIG["LABEL_FONTS"] = ("Arial", 14, 'bold')
