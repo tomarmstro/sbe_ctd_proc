@@ -6,6 +6,7 @@ Australian Institute of Marine Science
 
 # TODO: Skip option for each cast
 # TODO: Pull temp file cleanup over to main function for lost files left from using 'stop button'
+# Pass temp file names across with module functions, pull them into a list, then use the stop button function to search for them and delete if they exist.
 
 # Imports
 import SBE
@@ -99,7 +100,7 @@ def process_step(
                 print(output_msg)
         except IOError:
             print(error_msg)
-
+    
 
 def process_cnv(file_name, sbe: SBE) -> None:
     """Run SBE data processing steps
@@ -399,7 +400,6 @@ def process() -> None:
             # run DatCnv
             process_hex(base_file_name, sbe)
             # Run other AIMS modules
-
             process_cnv(base_file_name, sbe)
 
 
@@ -436,25 +436,26 @@ def select_database_directory(database_path_label):
     database_path_label.config(text=CONFIG["CTD_DATABASE_PATH"])
 
 
+# Start the process
+def start():
+    global multiprocessing_process
+    multiprocessing_process = multiprocessing.Process(target=process, args=())
+    multiprocessing_process.start()
+
 
 # Terminate the process
-def start():
-    global proc
-    proc = multiprocessing.Process(target=process, args=())
-    proc.start()
-
-"""Stop processing with a button click"""
 def stop():
+    """Stop processing with a button click"""
     try:
-        proc.terminate()  # sends a SIGTERM   
+        multiprocessing_process.terminate()  # sends a SIGTERM   
         print("Stopped processing.")  
+        print("Temporary files may remain in the raw directory due to cancelled processing.")
     except NameError:
         print("No processing started.")
         
 
 # %%
 def main():
-    # global proc
     processed_path = CONFIG["PROCESSED_PATH"]
     # Create a tkinter window
     window = customtkinter.CTk()  # create CTk window like you do with the Tk window

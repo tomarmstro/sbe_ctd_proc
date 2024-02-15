@@ -381,3 +381,30 @@ class SBE(object):
 
         # Return content
         return result
+
+
+    # def sbe_module(self, data, xmlcon=None, psa=None, module_exe):
+    #     """Execute the SBE Section module."""
+    #     # Set to xmlcon and psa paths to instance default if not defined as arg
+    #     xmlcon = xmlcon or self._xmlcon
+    #     psa = psa or self._psa_section
+
+    #     # Create temporary files and paths from data
+    #     input_file = self._write_temp_file(data, '.cnv')
+
+    #     # Execute the seabird command
+    #     cmd = module_exe.format(self._sbe_path)
+    #     self._sbe_cmd(cmd, input_file, os.path.dirname(input_file), xmlcon, psa)
+
+    #     # Return file content
+    #     out_file = input_file
+    #     f = open(out_file, 'r')
+    #     result = f.read()
+    #     f.close()
+
+    #     # Cleanup - Remove temp files including if the psa files contain name appends
+    #     for filename in glob.glob(os.path.splitext(out_file)[0] + "*"):
+    #         os.remove(filename)
+
+    #     # Return content
+    #     return result
