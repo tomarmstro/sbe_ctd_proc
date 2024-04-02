@@ -1,7 +1,6 @@
 """
 SBE CTD Data Processor
-Author: Thomas Armstrong
-Australian Institute of Marine Science
+Author: tomarmstro
 """
 
 # TODO: Skip option for each cast
@@ -82,7 +81,6 @@ def process_step(
     :type error_msg: str
     """
     # run processing
-    print("file name: ", file_name)
     with open(
         os.path.join(CONFIG["PROCESSED_PATH"], file_name + target_file_ext + ".cnv"),
         "r",
@@ -408,7 +406,7 @@ def select_raw_directory(raw_path_label):
     print("Raw Directory Button clicked!")
     raw_directory_selected = filedialog.askdirectory()
     CONFIG["RAW_PATH"] = raw_directory_selected
-    raw_path_label.config(text=CONFIG["RAW_PATH"])
+    raw_path_label.configure(text=CONFIG["RAW_PATH"])
 
 
 def select_processed_directory(processed_path_label):
@@ -416,7 +414,7 @@ def select_processed_directory(processed_path_label):
     print("Processed Directory Button clicked!")
     processed_directory_selected = filedialog.askdirectory()
     CONFIG["PROCESSED_PATH"] = processed_directory_selected
-    processed_path_label.config(text=CONFIG["PROCESSED_PATH"])
+    processed_path_label.configure(text=CONFIG["PROCESSED_PATH"])
 
 
 def select_config_directory(config_path_label):
@@ -424,7 +422,7 @@ def select_config_directory(config_path_label):
     print("Configuration Directory Button clicked!")
     config_directory_selected = filedialog.askdirectory()
     CONFIG["CTD_CONFIG_PATH"] = config_directory_selected
-    config_path_label.config(text=CONFIG["CTD_CONFIG_PATH"])
+    config_path_label.configure(text=CONFIG["CTD_CONFIG_PATH"])
 
 
 def select_database_directory(database_path_label):
@@ -433,7 +431,7 @@ def select_database_directory(database_path_label):
     database_directory_selected = filedialog.askdirectory()
     database_path = database_directory_selected
     CONFIG["CTD_DATABASE_PATH"] = database_directory_selected
-    database_path_label.config(text=CONFIG["CTD_DATABASE_PATH"])
+    database_path_label.configure(text=CONFIG["CTD_DATABASE_PATH"])
 
 
 # Start the process

@@ -9,7 +9,7 @@ CONFIG["CTD_DATABASE_PATH"] = r"C:\OceanDB\Backend"
 
 # Set whether the program designates latitude for the Derive module (1 for yes, 0 for no)
 CONFIG["SET_DERIVE_LATITUDE"] = True
-CONFIG["USE_DATABASE"] = True
+CONFIG["USE_DATABASE"] = False
 #
 
 # CTD IDs
