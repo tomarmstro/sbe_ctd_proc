@@ -1,9 +1,6 @@
-/config.py
-processed/*
-raw/*.cnv
+config.py
 *.hex
 *.cnv
-/SBEDataProcessing-Win32
 
 # Microsoft Office, temporary files
 ~*

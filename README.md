@@ -39,6 +39,8 @@ You can use your IDE (e.g. VSCode) to do this, or run:
 
 4. Copy `config.example.py` to `config.py` and edit for your setup.
 
+5. Run `sbe_proc.py`.
+
 ## Tests
 
 Tests are located in the `test` directory.

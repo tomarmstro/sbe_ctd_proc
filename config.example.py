@@ -2,14 +2,14 @@
 CONFIG = {}
 
 # paths
-CONFIG["RAW_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\data\raw"
-CONFIG["PROCESSED_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\data\processed"
-CONFIG["PROCESSING_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\data\processing"
-CONFIG["CTD_CONFIG_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\config"
+CONFIG["RAW_PATH"] = r"C:\Users\tarmstro\Desktop\CTD_Files\sbe_proc_data\raw"
+CONFIG["PROCESSED_PATH"] = r"C:\Users\tarmstro\Desktop\CTD_Files\sbe_proc_data\processed"
+CONFIG["PROCESSING_PATH"] = r"C:\Users\tarmstro\Desktop\CTD_Files\sbe_proc_data\processing"
+CONFIG["CTD_CONFIG_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc-main\config"
 CONFIG["CTD_DATABASE_PATH"] = r"C:\OceanDB\Backend"
 CONFIG["DATABASE_MDB_FILE"] = r"C:\OceanDB\Backend\OceanDB2016_be.mdb"
 CONFIG["DATABASE_MDW_FILE"] = r"C:\OceanDB\OceanDBSecurity.mdw"
-CONFIG["DESTINATION_PATH"] = r"C:\Users\tarmstro\Projects\sbe_ctd_proc\data\destination"
+CONFIG["DESTINATION_PATH"] = r"C:\Users\tarmstro\Desktop\CTD_Files\sbe_proc_data\destination"
 CONFIG["SBEDataProcessing_PATH"] = r"C:\Program Files (x86)\Sea-Bird\SBEDataProcessing-Win32"
 
 # Set whether the program designates latitude for the Derive module (1 for yes, 0 for no)
