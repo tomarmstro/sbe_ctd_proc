@@ -2,15 +2,13 @@
 <Data_Conversion >
   <Version value="7.23.1" />
   <ServerName value="Data Conversion" />
-  <InstrumentPath value="C:\AIMS\Seabird\Config\NRS2_6390_18072016.xmlcon" />
+  <InstrumentPath value="C:\AIMS\Seabird\Config\SBE19plusV2_6390_230127.xmlcon" />
   <InstrumentMatch value="0" />
   <InputDir value="C:\AIMS\Seabird\Data\Batch" />
-  <InputFileArray size="1" GrowBy="-1" >
-    <ArrayItem index="0" value="IMOS_ANMN-NRS_CPTU_20161107_NRSDAR_FV00_CTDPRO.hex" />
-  </InputFileArray>
+  <InputFileArray size="0" GrowBy="-1" />
   <OutputDir value="C:\AIMS\Seabird\Data\Batch" />
   <NameAppend value="C" />
-  <OutputFile value="IMOS_ANMN-NRS_CPTU_20161107_NRSDAR_FV00_CTDPRO.cnv" />
+  <OutputFile value="" />
   <LastProcessed value="0" />
   <ProcessScansToEnd value="1" />
   <ScansToSkip value="300" />

@@ -22,4 +22,25 @@ Dates must be at the end of the calibration_files_##### directory names.
          -   LoopEditIMOS.psa
 
 
-        
+## Setup
+
+If needed, [install Python](https://www.python.org/downloads/).
+For Windows users, this is easiest to install from the [Windows Store](https://apps.microsoft.com/detail/9ncvdn91xzqp).
+
+1. Create a virtual environment.
+You can use your IDE (e.g. VSCode) to do this, or run:
+`python3 -m venv .venv`
+`.venv\Scripts\activate`
+
+2. Install requirements
+`pip install -r requirements.txt`
+
+3. Install [SBE Data Processing](https://software.seabird.com/)
+
+4. Copy `config.example.py` to `config.py` and edit for your setup.
+
+## Tests
+
+Tests are located in the `test` directory.
+Files can be executed individually.
+To run all tests: `python -m unittest`

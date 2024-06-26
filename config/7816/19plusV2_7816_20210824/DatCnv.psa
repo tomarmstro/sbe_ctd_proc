@@ -88,8 +88,9 @@
       </Calc>
     </CalcArrayItem>
     <CalcArrayItem index="12" CalcID="201" >
-      <Calc UnitID="88" Ordinal="0" >
+      <Calc UnitID="-1" Ordinal="0" >
         <FullName value="PAR/Logarithmic, Satlantic [umol photons/m2/s]" />
+	<PAR_Units value="0" />
       </Calc>
     </CalcArrayItem>
   </CalcArray>

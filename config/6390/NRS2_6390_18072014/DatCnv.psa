@@ -2,15 +2,13 @@
 <Data_Conversion >
   <Version value="7.23.2" />
   <ServerName value="Data Conversion" />
-  <InstrumentPath value="C:\AIMS\Seabird\Config\NRS2_6390_18072014.xmlcon" />
+  <InstrumentPath value="C:\AIMS\Seabird\Config\SBE19plusV2_6390_230127.xmlcon" />
   <InstrumentMatch value="0" />
   <InputDir value="C:\AIMS\Seabird\Data\Batch" />
-  <InputFileArray size="1" GrowBy="-1" >
-    <ArrayItem index="0" value="SBE19plus_01906390_2015_03_17_0002.hex" />
-  </InputFileArray>
+  <InputFileArray size="0" GrowBy="-1" />
   <OutputDir value="C:\AIMS\Seabird\Data\Batch" />
   <NameAppend value="C" />
-  <OutputFile value="SBE19plus_01906390_2015_03_17_0002.cnv" />
+  <OutputFile value="" />
   <LastProcessed value="0" />
   <ProcessScansToEnd value="1" />
   <ScansToSkip value="300" />

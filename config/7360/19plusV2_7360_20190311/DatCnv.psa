@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Data_Conversion >
-  <Version value="7.26.6.28" />
+  <Version value="7.26.7.129" />
   <ServerName value="Data Conversion" />
-  <InstrumentPath value="C:\Users\tarmstro\Desktop\Moorings\NRSYON-SUB-2206\SBE16V2_7112_20220218.xmlcon" />
+  <InstrumentPath value="C:\Users\tarmstro\Projects\sbe_ctd_proc\config\7360\19plusV2_7360_20190311\SBE19plusV2_7360_20190311.xmlcon" />
   <InstrumentMatch value="0" />
-  <InputDir value="C:\Users\tarmstro\Desktop\Moorings\NRSYON-SUB-2206" />
-  <InputFileArray size="1" GrowBy="-1" >
-    <ArrayItem index="0" value="SBE16plus_7112_2301truncated.hex" />
-  </InputFileArray>
-  <OutputDir value="C:\Users\tarmstro\Desktop\Moorings\NRSYON-SUB-2206" />
+  <InputDir value="C:\AIMS\Seabird\Data\Batch" />
+  <InputFileArray size="0" GrowBy="-1" />
+  <OutputDir value="C:\AIMS\Seabird\Data\Batch" />
   <NameAppend value="C" />
-  <OutputFile value="SBE16plus_7112_2301truncated" />
+  <OutputFile value="" />
   <LastProcessed value="0" />
   <ProcessScansToEnd value="1" />
   <ScansToSkip value="0" />
@@ -25,9 +23,9 @@
   <StartTimeOption value="0" />
   <PromptForNoteAndOrStartTime value="0" />
   <CalcArray Size="9" >
-    <CalcArrayItem index="0" CalcID="126" >
+    <CalcArrayItem index="0" CalcID="84" >
       <Calc UnitID="52" Ordinal="0" >
-        <FullName value="Time, Instrument [seconds]" />
+        <FullName value="Time, Elapsed [seconds]" />
       </Calc>
     </CalcArrayItem>
     <CalcArrayItem index="1" CalcID="72" >
@@ -66,8 +64,9 @@
       </Calc>
     </CalcArrayItem>
     <CalcArrayItem index="8" CalcID="201" >
-      <Calc UnitID="88" Ordinal="0" >
-        <FullName value="PAR/Logarithmic, Satlantic [umol photons/m2/s]" />
+      <Calc UnitID="-1" Ordinal="0" >
+        <FullName value="PAR/Logarithmic, Satlantic" />
+        <PAR_Units value="0" />
       </Calc>
     </CalcArrayItem>
   </CalcArray>

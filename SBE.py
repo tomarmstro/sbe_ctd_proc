@@ -14,7 +14,6 @@ Copyright (c) 2016 Hakai Institute and Contributors All Rights Reserved.
 Adjusted by Thomas Armstrong, 2023
 """
 
-from __future__ import print_function
 from hashlib import sha1
 import os
 import subprocess
@@ -64,7 +63,6 @@ class SBE(object):
     def _write_temp_file(self, content, ext='.txt'):
         """Save in memory file content to temp dir and return path."""
         # Create temp file path use hash of file content
-        # import ipdb; ipdb.set_trace()
         path = os.path.join(self._temp_dir, sha1(content.encode('utf-8')).hexdigest() + ext)
         # Create the temp file
         with open(path, 'w') as f:
@@ -80,7 +78,7 @@ class SBE(object):
 
         # see pp 136
         # seabird.com/sites/default/files/documents/SBEDataProcessing_7.26.0.pdf
-        # import ipdb; ipdb.set_trace()
+
         #/a"" in exec_str is to ignore all name appends as they are manually input with sbe_proc
         exec_str = '"{cmd}" /c"{c}" /i"{i}" /o"{o}" /p"{p}" /a"" /s'.format(
             cmd=cmd,
@@ -89,9 +87,14 @@ class SBE(object):
             o=out_dir,
             p=psa
         )
-        # import ipdb; ipdb.set_trace()
+
         # Run command, throw error if failure occurs
-        subprocess.check_call(exec_str, shell=True)
+        try:
+            subprocess.check_call(exec_str)
+        except subprocess.CalledProcessError as e:
+            if e.returncode ==3221225781:
+                print("Error calling exe: probably due to DLL missing, you may need to install Visual C++ Redistributable. Try running the exe from File Explorer to see error.")
+            raise e
 
     def align_ctd(self, data, xmlcon=None, psa=None):
         """Execute the SBE Align CTD module."""
@@ -169,7 +172,7 @@ class SBE(object):
             os.remove(filename)
 
         # Return content
-        return result 
+        return result
 
     def dat_cnv(self, data, xmlcon=None, psa=None):
         """Execute the SBE Data Conversion module."""
@@ -188,7 +191,8 @@ class SBE(object):
         # print("test2", glob.glob(os.path.splitext(input_file)[0] + '*.cnv'))
 
         # Return file content
-        out_file = os.path.splitext(input_file)[0] + 'C.cnv'
+      #  out_file = os.path.splitext(input_file)[0] + 'C.cnv'
+        out_file = os.path.splitext(input_file)[0] + '.cnv'
         # out_file = glob.glob(os.path.splitext(input_file)[0] + '*.cnv')[0]
         f = open(out_file, 'r')
         result = f.read()

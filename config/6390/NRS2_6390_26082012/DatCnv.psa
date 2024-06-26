@@ -2,12 +2,10 @@
 <Data_Conversion >
   <Version value="7.21k" />
   <ServerName value="Data Conversion" />
-  <InstrumentPath value="C:\AIMS\Seabird\Config\NRS2_6390_26082012_O2andNTU.xmlcon" />
+  <InstrumentPath value="C:\AIMS\Seabird\Config\SBE19plusV2_6390_230127.xmlcon" />
   <InstrumentMatch value="0" />
   <InputDir value="C:\AIMS\Seabird\Data\Batch" />
-  <InputFileArray size="1" GrowBy="-1" >
-    <ArrayItem index="0" value="imos_anmn-nrs_bctpu_130405_nrsdar_fv00_ctdpro.hex" />
-  </InputFileArray>
+  <InputFileArray size="0" GrowBy="-1" />
   <OutputDir value="C:\AIMS\Seabird\Data\Batch" />
   <NameAppend value="C" />
   <OutputFile value="" />
